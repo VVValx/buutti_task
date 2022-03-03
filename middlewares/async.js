@@ -1,4 +1,4 @@
-function errorMid(handler) {
+module.exports = async (handler) => {
   return (req, res, next) => {
     try {
       await handler(req, res);
@@ -6,4 +6,4 @@ function errorMid(handler) {
       next(error);
     }
   };
-}
+};
