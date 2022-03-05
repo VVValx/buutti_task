@@ -1,7 +1,8 @@
-import "./App.scss";
+import Books from "./pages/books/Books";
+import "./styles/index.scss";
 
 function App() {
-  return <div className="App"></div>;
+  return <Books />;
 }
 
 export default App;

@@ -1,2 +1,13 @@
-@import "./mixins";
-@import "./variables";
+//fonts
+@import url("https://fonts.googleapis.com/css2?family=Titillium+Web&display=swap");
+
+//partials
+@import "./partials/mixins";
+@import "./partials/variables";
+
+//base
+@import "./base/reset";
+@import "./base/typography";
+
+//pages
+@import "./pages/books";

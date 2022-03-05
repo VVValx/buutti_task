@@ -1,0 +1,41 @@
+.main-container {
+  .search {
+    @include width(40px);
+
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      border: none;
+      border-radius: 5px;
+      @include boxShadow;
+      &::placeholder {
+        color: $grey;
+      }
+    }
+  }
+
+  .list-container {
+    @include width(30px);
+    @include boxShadow;
+    color: $grey;
+
+    .list-header {
+      @include flex;
+      padding: 10px 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .item {
+      @include flex;
+      padding: 15px 20px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+      &:hover {
+        background: $teal;
+        color: $dark-white;
+      }
+    }
+  }
+}
