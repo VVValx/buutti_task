@@ -10,6 +10,24 @@ router.get("/", async (req, res) => {
   res.send(books);
 });
 
+router.get("/:id", async (req, res) => {
+  const book = await Books.findOne({ _id: req.params.id }).select("-__v");
+
+  if (!book) {
+    res.status(404).send({
+      error: {
+        code: 404,
+        message: "Book not found",
+      },
+    });
+
+    logger.info("Book not found");
+    return;
+  }
+
+  res.send(book);
+});
+
 router.post("/", async (req, res) => {
   const { title, author, description } = req.body;
 

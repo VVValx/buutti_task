@@ -3,11 +3,11 @@
     @include width(40px);
 
     input {
+      @include boxShadow;
       width: 100%;
-      padding: 12px 15px;
+      padding: 15px;
       border: none;
       border-radius: 5px;
-      @include boxShadow;
       &::placeholder {
         color: $grey;
       }
@@ -22,8 +22,10 @@
     .list-header {
       @include flex;
       padding: 10px 20px;
-      font-size: 20px;
+      font-size: 23px;
       font-weight: bold;
+      background: $teal;
+      color: $dark-white;
     }
 
     .item {
@@ -33,9 +35,58 @@
       transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
       &:hover {
-        background: $teal;
+        background: $dark-green;
         color: $dark-white;
       }
+
+      .title,
+      .author {
+        &::first-letter {
+          text-transform: uppercase;
+        }
+      }
+    }
+
+    .pagination {
+      @include flex;
+      width: fit-content;
+      margin: 10px auto;
+      padding: 10px 0;
+      text-align: center;
+      cursor: pointer;
+
+      .arrow {
+        font-size: 25px;
+        color: $light-grey;
+        cursor: pointer;
+      }
+
+      .arrow-left {
+        margin-right: 25px;
+      }
+
+      .arrow-right {
+        margin-left: 25px;
+      }
+
+      .page {
+        padding: 6px 14px;
+        margin: 0 7px;
+        border-top: 2px solid $dark-white;
+        cursor: pointer;
+      }
+
+      .active-page {
+        border-top: 2px solid $teal;
+      }
+    }
+
+    .currentPage {
+      width: fit-content;
+      margin: 10px auto;
+      padding-bottom: 12px;
+      color: $grey;
+      font-size: 14px;
     }
   }
 }
