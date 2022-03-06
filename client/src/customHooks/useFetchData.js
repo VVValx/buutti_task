@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Axios from "../services/Axios";
 
-function useFetchData(url) {
+function useFetchData(url, apiCallSuccess) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -19,7 +19,7 @@ function useFetchData(url) {
     };
 
     getData();
-  }, [url]);
+  }, [url, apiCallSuccess]);
 
   return { data, loading };
 }

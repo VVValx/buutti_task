@@ -4,13 +4,25 @@
   align-items: center;
 }
 
-@mixin width($margin) {
-  width: 90%;
-  max-width: 700px;
+@mixin width($margin, $max: 700px) {
+  width: 95%;
+  max-width: $max;
   min-width: fit-content;
   margin: $margin auto;
 }
 
 @mixin boxShadow {
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+@mixin fixedCentre {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@mixin normalizePosition {
+  position: static;
+  transform: translate(0, 0);
 }
