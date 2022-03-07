@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "client": "cd client && npm start",
+    "client": "npm start --prefix client",
     "server": "nodemon index.js",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
@@ -19,6 +19,7 @@
     "express": "^4.17.3",
     "express-async-errors": "^3.1.1",
     "mongoose": "^6.2.4",
+    "nodemon": "^2.0.15",
     "winston": "^3.6.0"
   }
 }
