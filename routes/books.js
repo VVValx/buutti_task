@@ -14,9 +14,9 @@ router.get("/:id", async (req, res) => {
   const book = await Books.findOne({ _id: req.params.id }).select("-__v");
 
   if (!book) {
-    res.status(404).send({
+    res.status(400).send({
       error: {
-        code: 404,
+        code: 400,
         message: "Book not found",
       },
     });
@@ -73,9 +73,9 @@ router.put("/:id", async (req, res) => {
 
   const book = await Books.findOne({ _id: req.params.id });
   if (!book) {
-    res.status(404).send({
+    res.status(400).send({
       error: {
-        code: 404,
+        code: 400,
         message: "Book not found",
       },
     });
@@ -107,9 +107,9 @@ router.delete("/:id", async (req, res) => {
 
   let book = await Books.findOne({ _id: id });
   if (!book) {
-    res.status(404).send({
+    res.status(400).send({
       error: {
-        code: 404,
+        code: 400,
         message: "Book not found",
       },
     });
