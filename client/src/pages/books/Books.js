@@ -7,6 +7,7 @@ import paginate from "../../utils/paginate";
 import Input from "../../components/input/Input";
 import range from "../../utils/range";
 import useFetchData from "../../customHooks/useFetchData";
+import sortItems from "../../utils/sortItems";
 import urls from "../../config/urls.json";
 
 function Books() {
@@ -26,7 +27,7 @@ function Books() {
 
   if (loading) return <div>Loading...</div>;
 
-  const handleSearch = () => {
+  const handleSearch = (data) => {
     const s = search.toLocaleLowerCase();
     return data.filter(
       ({ title, author }) =>
@@ -53,6 +54,11 @@ function Books() {
     return message;
   };
 
+  const handleSearchInput = ({ target }) => {
+    setSearch(target.value);
+    setCurrentPage(1);
+  };
+
   const handleChange = ({ target: input }) => {
     const newBook = { ...book };
     const errors = { ...inputError };
@@ -65,18 +71,12 @@ function Books() {
 
     setBook(newBook);
     setInputError(errors);
-    setCurrentPage(1);
   };
 
   const handleBookSelect = (book) => {
     const { _id, title, author, description } = book;
     setBook({ title, author, description });
     setBookSelected(_id);
-  };
-
-  const changeCurrentPage = (n) => {
-    if (n === -1 && currentPage === 1) return;
-    setCurrentPage((page) => (page += n));
   };
 
   const handleFormError = () => {
@@ -158,10 +158,17 @@ function Books() {
     }
   };
 
-  const filteredBooks = search.length ? handleSearch() : data;
+  const sortedBooks = sortItems(data);
+  const filteredBooks = search.length ? handleSearch(sortedBooks) : sortedBooks;
   const max = Math.ceil(filteredBooks.length / pageSize);
   const rangeArr = range(max);
   const paginatedBooks = paginate(filteredBooks, currentPage, pageSize);
+
+  const changeCurrentPage = (n) => {
+    if (n === 1 && currentPage === rangeArr[rangeArr.length - 1]) return;
+    if (n === -1 && currentPage === 1) return;
+    setCurrentPage((page) => (page += n));
+  };
 
   return (
     <div className="main-container">
@@ -169,7 +176,7 @@ function Books() {
         <Input
           className="search"
           value={search}
-          onChange={({ target }) => setSearch(target.value)}
+          onChange={handleSearchInput}
           placeholder="Search book by title or author"
         />
 

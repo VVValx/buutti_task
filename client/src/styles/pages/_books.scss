@@ -2,21 +2,22 @@
   @include fixedCentre;
   @include flex;
   width: 100%;
+  max-width: 1300px;
 
   .left {
     flex-basis: 50%;
 
     .search {
       @include width(40px);
-
       input {
         @include boxShadow;
         width: 100%;
         padding: 15px;
         border: none;
         border-radius: 5px;
+
         &::placeholder {
-          color: $grey;
+          color: $light-grey;
         }
       }
     }
