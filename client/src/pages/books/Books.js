@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import Axios from "../../services/Axios";
+import paginate from "../../utils/paginate";
 import Icon from "../../components/icon/Icon";
 import range from "../../utils/range";
 import useFetchData from "../../customHooks/useFetchData";
@@ -8,6 +9,11 @@ import urls from "../../config/urls.json";
 
 function Books() {
   const [search, setSearch] = useState("");
+  const [inputError, setInputError] = useState({
+    title: "",
+    author: "",
+    description: "",
+  });
   const [pageSize] = useState(6);
   const [currentPage, setCurrentPage] = useState(1);
   const [book, setBook] = useState({ title: "", author: "", description: "" });
@@ -27,11 +33,37 @@ function Books() {
     );
   };
 
+  const handleInputError = ({ name, value }) => {
+    let message = "";
+    if (name === "title" || name === "author") {
+      if (!value) message = `Please enter ${name}`;
+      if (value && value.length < 3)
+        message = `${name} should not be less than 3 characters`;
+      if (value.length > 50)
+        message = `${name} should not be more than 50 characters`;
+    }
+
+    if (name === "description")
+      if (!value) message = "Please enter description";
+
+    if (!message) return null;
+
+    return message;
+  };
+
   const handleChange = ({ target: input }) => {
     const newBook = { ...book };
+    const errors = { ...inputError };
+
+    const errorMessage = handleInputError(input);
+    if (errorMessage) errors[input.name] = errorMessage;
+    else delete errors[input.name];
+
     newBook[input.name] = input.value;
 
     setBook(newBook);
+    setInputError(errors);
+    setCurrentPage(1);
   };
 
   const handleBookSelect = (book) => {
@@ -40,12 +72,49 @@ function Books() {
     setBookSelected(_id);
   };
 
+  const changeCurrentPage = (n) => {
+    if (n === -1 && currentPage === 1) return;
+    setCurrentPage((page) => (page += n));
+  };
+
+  const handleFormError = () => {
+    const { title, author, description } = book;
+    const authorArr = author.split(" ");
+    const errors = {};
+
+    //name validation
+    if (!title) errors.title = "Please enter title";
+    if (title && title.length < 3)
+      errors.title = "Title cannot be less than 3 characters";
+    if (title.length > 50)
+      errors.title = "Title cannot be more than 50 characters";
+
+    //author
+    if (!author) errors.author = "Please enter author";
+    if (author && author.length < 3)
+      errors.title = "author cannot be less than 3 characters";
+    if (author.length > 50)
+      errors.author = "author cannot be more than 50 characters";
+    if (!authorArr[1]) errors.author = "Please enter author full name";
+
+    //description
+    if (!description) errors.description = "Please enter description";
+
+    if (Object.keys(errors).length < 1) return null;
+
+    return errors;
+  };
+
   const apiCall = async (method, url, data = null) => {
+    const error = handleFormError();
+
+    if (error) return setInputError(error);
+
     try {
       const { data: res } =
-        method === "post"
-          ? await Axios.post(url, data)
-          : await Axios[method](url);
+        method === "delete"
+          ? await Axios.delete(url)
+          : await Axios[method](url, data);
       console.log(res);
       setApiCallCountSuccess((value) => (value += 1));
       setBook({ title: "", author: "", description: "" });
@@ -57,8 +126,9 @@ function Books() {
 
   const { title, author, description } = book;
   const filteredBooks = search.length ? handleSearch() : data;
-  const max = Math.ceil(data.length / pageSize);
+  const max = Math.ceil(filteredBooks.length / pageSize);
   const rangeArr = range(max);
+  const paginatedBooks = paginate(filteredBooks, currentPage, pageSize);
 
   return (
     <div className="main-container">
@@ -77,7 +147,7 @@ function Books() {
             <div className="list-title">Title</div>
             <div className="list-author">Author</div>
           </div>
-          {filteredBooks.map((book) => (
+          {paginatedBooks.map((book) => (
             <div
               className={`item ${
                 bookSelected === book._id ? "bookSelected" : ""
@@ -91,18 +161,25 @@ function Books() {
           ))}
 
           <div className="pagination">
-            <div className="arrow arrow-left">
+            <div
+              className="arrow arrow-left"
+              onClick={() => changeCurrentPage(-1)}
+            >
               <Icon icon={<MdKeyboardArrowLeft />} />
             </div>
             {rangeArr.map((c, index) => (
               <div
                 className={`page ${currentPage === c ? "active-page" : ""}`}
+                onClick={() => setCurrentPage(index + 1)}
                 key={index}
               >
                 {c}
               </div>
             ))}
-            <div className="arrow arrow-right">
+            <div
+              className="arrow arrow-right"
+              onClick={() => changeCurrentPage(1)}
+            >
               <Icon icon={<MdKeyboardArrowRight />} />
             </div>
           </div>
@@ -123,6 +200,8 @@ function Books() {
               value={title}
               onChange={handleChange}
             />
+
+            {inputError.title && <p className="error">{inputError.title}</p>}
           </div>
 
           <div className="form-input">
@@ -133,6 +212,8 @@ function Books() {
               value={author}
               onChange={handleChange}
             />
+
+            {inputError.author && <p className="error">{inputError.author}</p>}
           </div>
 
           <div className="form-input">
@@ -142,6 +223,10 @@ function Books() {
               value={description}
               onChange={handleChange}
             />
+
+            {inputError.description && (
+              <p className="error">{inputError.description}</p>
+            )}
           </div>
 
           <div className="form-input">
@@ -149,7 +234,9 @@ function Books() {
               Save New
             </button>
             <button
-              onClick={() => apiCall("put", `${getBooks}/${bookSelected}`)}
+              onClick={() =>
+                apiCall("put", `${getBooks}/${bookSelected}`, book)
+              }
               disabled={bookSelected ? false : true}
             >
               Save

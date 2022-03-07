@@ -6,6 +6,7 @@
   align-items: center;
   .left {
     flex-basis: 50%;
+
     .search {
       @include width(40px);
 
@@ -105,6 +106,7 @@
 
   .right {
     flex-basis: 50%;
+
     .book-container {
       @include width(0);
       @include boxShadow;
@@ -132,6 +134,11 @@
           margin: 20px 0;
         }
 
+        .error {
+          color: #dc7633;
+          font-size: 14px;
+        }
+
         button {
           padding: 5px 8px;
           cursor: pointer;
@@ -153,7 +160,7 @@
   }
 }
 
-@media (max-height: 790px) {
+@media (max-height: 770px) {
   .main-container {
     @include normalizePosition;
   }
