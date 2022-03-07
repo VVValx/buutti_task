@@ -1,0 +1,6 @@
+textarea {
+  @extend %formInput;
+  padding: 8px;
+  height: 150px;
+  font-family: "Titillium Web", sans-serif;
+}

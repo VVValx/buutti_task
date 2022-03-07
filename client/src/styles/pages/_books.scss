@@ -1,9 +1,8 @@
 .main-container {
   @include fixedCentre;
+  @include flex;
   width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+
   .left {
     flex-basis: 50%;
 
@@ -21,147 +20,22 @@
         }
       }
     }
-
-    .list-container {
-      @include width(30px);
-      @include boxShadow;
-      color: $grey;
-
-      .list-header {
-        @include flex;
-        padding: 10px 20px;
-        font-size: 23px;
-        font-weight: bold;
-        background: $teal;
-        color: $dark-white;
-      }
-
-      .item {
-        @include flex;
-        padding: 15px 20px;
-        cursor: pointer;
-        transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-
-        &:hover {
-          background: #34495e;
-          color: $dark-white;
-        }
-
-        .title,
-        .author {
-          &::first-letter {
-            text-transform: uppercase;
-          }
-        }
-      }
-
-      .bookSelected {
-        background: $dark-green;
-        color: $dark-white;
-      }
-
-      .pagination {
-        @include flex;
-        width: fit-content;
-        margin: 10px auto;
-        padding: 10px 0;
-        text-align: center;
-        cursor: pointer;
-
-        .arrow {
-          font-size: 25px;
-          color: $light-grey;
-          cursor: pointer;
-        }
-
-        .arrow-left {
-          margin-right: 25px;
-        }
-
-        .arrow-right {
-          margin-left: 25px;
-        }
-
-        .page {
-          padding: 6px 14px;
-          margin: 0 7px;
-          border-top: 2px solid $dark-white;
-          cursor: pointer;
-        }
-
-        .active-page {
-          border-top: 2px solid $teal;
-        }
-      }
-
-      .currentPage {
-        width: fit-content;
-        margin: 10px auto;
-        padding-bottom: 12px;
-        color: $grey;
-        font-size: 14px;
-      }
-    }
   }
 
   .right {
     flex-basis: 50%;
-
-    .book-container {
-      @include width(0);
-      @include boxShadow;
-      padding: 20px;
-      border-radius: 5px;
-
-      .form-input {
-        input {
-          @extend %formInput;
-          padding: 10px 8px;
-        }
-
-        textarea {
-          @extend %formInput;
-          padding: 8px;
-          height: 150px;
-        }
-
-        .form-label {
-          color: $grey;
-          font-size: 14px;
-        }
-
-        &:not(:first-child) {
-          margin: 20px 0;
-        }
-
-        .error {
-          color: #dc7633;
-          font-size: 14px;
-        }
-
-        button {
-          padding: 5px 8px;
-          cursor: pointer;
-          border: 1px solid $lighter-grey;
-          color: $grey;
-          border-radius: 5px;
-
-          &:not(:first-child) {
-            margin-left: 5px;
-          }
-
-          &:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-          }
-        }
-      }
-    }
   }
 }
 
 @media (max-height: 770px) {
   .main-container {
     @include normalizePosition;
+  }
+}
+
+@media (max-width: 700px) {
+  .main-container {
+    @include normalizePosition;
+    display: block;
   }
 }

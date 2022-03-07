@@ -1,0 +1,41 @@
+.pagination {
+  @include flex;
+  width: fit-content;
+  margin: 10px auto;
+  padding: 10px 0;
+  text-align: center;
+  cursor: pointer;
+
+  .arrow {
+    font-size: 25px;
+    color: $light-grey;
+    cursor: pointer;
+  }
+
+  .arrow-left {
+    margin-right: 25px;
+  }
+
+  .arrow-right {
+    margin-left: 25px;
+  }
+
+  .page {
+    padding: 6px 14px;
+    margin: 0 7px;
+    border-top: 2px solid $dark-white;
+    cursor: pointer;
+  }
+
+  .active-page {
+    border-top: 2px solid $teal;
+  }
+}
+
+.currentPage {
+  width: fit-content;
+  margin: 10px auto;
+  padding-bottom: 12px;
+  color: $grey;
+  font-size: 14px;
+}

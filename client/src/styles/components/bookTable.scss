@@ -1,0 +1,14 @@
+.list-container {
+  @include width(30px);
+  @include boxShadow;
+  color: $grey;
+
+  .list-header {
+    @include flex;
+    padding: 10px 20px;
+    font-size: 23px;
+    font-weight: bold;
+    background: $teal;
+    color: $dark-white;
+  }
+}

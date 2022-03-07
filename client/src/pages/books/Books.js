@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
+import { toast } from "react-toastify";
 import Axios from "../../services/Axios";
+import BookTable from "../../components/bookTable/BookTable";
+import Form from "../../components/form/Form";
 import paginate from "../../utils/paginate";
-import Icon from "../../components/icon/Icon";
+import Input from "../../components/input/Input";
 import range from "../../utils/range";
 import useFetchData from "../../customHooks/useFetchData";
 import urls from "../../config/urls.json";
@@ -95,7 +97,8 @@ function Books() {
       errors.title = "author cannot be less than 3 characters";
     if (author.length > 50)
       errors.author = "author cannot be more than 50 characters";
-    if (!authorArr[1]) errors.author = "Please enter author full name";
+    if (author && !authorArr[1])
+      errors.author = "Please enter author full name";
 
     //description
     if (!description) errors.description = "Please enter description";
@@ -105,26 +108,56 @@ function Books() {
     return errors;
   };
 
-  const apiCall = async (method, url, data = null) => {
+  const handlePost = async (url) => {
     const error = handleFormError();
 
     if (error) return setInputError(error);
 
     try {
-      const { data: res } =
-        method === "delete"
-          ? await Axios.delete(url)
-          : await Axios[method](url, data);
-      console.log(res);
+      await Axios.post(url, book);
       setApiCallCountSuccess((value) => (value += 1));
       setBook({ title: "", author: "", description: "" });
       setBookSelected(null);
-    } catch (error) {
-      console.log(error);
+      toast.success("New book created successfully!");
+    } catch (err) {
+      err.response &&
+        err.response.status === 400 &&
+        toast.info("Please fill in the forms");
     }
   };
 
-  const { title, author, description } = book;
+  const handleUpdate = async (url) => {
+    const error = handleFormError();
+
+    if (error) return setInputError(error);
+    try {
+      await Axios.put(url, book);
+      setApiCallCountSuccess((value) => (value += 1));
+      setBook({ title: "", author: "", description: "" });
+      setBookSelected(null);
+      toast.success("Book updated successfully!");
+    } catch (err) {
+      err.response &&
+        err.response.status === 400 &&
+        toast.info("Please fill in the forms");
+    }
+  };
+
+  const handleDelete = async (url) => {
+    try {
+      if (!bookSelected) return toast.info("Please select book to be deleted");
+      await Axios.delete(url);
+      setApiCallCountSuccess((value) => (value += 1));
+      setBook({ title: "", author: "", description: "" });
+      setBookSelected(null);
+      toast.success("Book deleted successfully!");
+    } catch (err) {
+      err.response &&
+        err.response.status === 404 &&
+        toast.info("Book already deleted");
+    }
+  };
+
   const filteredBooks = search.length ? handleSearch() : data;
   const max = Math.ceil(filteredBooks.length / pageSize);
   const rangeArr = range(max);
@@ -133,122 +166,35 @@ function Books() {
   return (
     <div className="main-container">
       <div className="left">
-        <div className="search">
-          <input
-            type="text"
-            value={search}
-            onChange={({ target }) => setSearch(target.value)}
-            placeholder="Search Book"
-          />
-        </div>
+        <Input
+          className="search"
+          value={search}
+          onChange={({ target }) => setSearch(target.value)}
+          placeholder="Search book by title or author"
+        />
 
-        <div className="list-container">
-          <div className="list-header">
-            <div className="list-title">Title</div>
-            <div className="list-author">Author</div>
-          </div>
-          {paginatedBooks.map((book) => (
-            <div
-              className={`item ${
-                bookSelected === book._id ? "bookSelected" : ""
-              }`}
-              key={book._id}
-              onClick={() => handleBookSelect(book)}
-            >
-              <div className="title">{book.title}</div>
-              <div className="author">{book.author}</div>
-            </div>
-          ))}
-
-          <div className="pagination">
-            <div
-              className="arrow arrow-left"
-              onClick={() => changeCurrentPage(-1)}
-            >
-              <Icon icon={<MdKeyboardArrowLeft />} />
-            </div>
-            {rangeArr.map((c, index) => (
-              <div
-                className={`page ${currentPage === c ? "active-page" : ""}`}
-                onClick={() => setCurrentPage(index + 1)}
-                key={index}
-              >
-                {c}
-              </div>
-            ))}
-            <div
-              className="arrow arrow-right"
-              onClick={() => changeCurrentPage(1)}
-            >
-              <Icon icon={<MdKeyboardArrowRight />} />
-            </div>
-          </div>
-
-          <div className="currentPage">
-            Showing {currentPage} of {max}
-          </div>
-        </div>
+        <BookTable
+          books={paginatedBooks}
+          bookSelected={bookSelected}
+          handleBookSelect={handleBookSelect}
+          changeCurrentPage={changeCurrentPage}
+          range={rangeArr}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          max={max}
+        />
       </div>
 
       <div className="right">
-        <div className="book-container">
-          <div className="form-input">
-            <div className="form-label">Title</div>
-            <input
-              type="text"
-              name="title"
-              value={title}
-              onChange={handleChange}
-            />
-
-            {inputError.title && <p className="error">{inputError.title}</p>}
-          </div>
-
-          <div className="form-input">
-            <div className="form-label">Author</div>
-            <input
-              type="text"
-              name="author"
-              value={author}
-              onChange={handleChange}
-            />
-
-            {inputError.author && <p className="error">{inputError.author}</p>}
-          </div>
-
-          <div className="form-input">
-            <div className="form-label">Description</div>
-            <textarea
-              name="description"
-              value={description}
-              onChange={handleChange}
-            />
-
-            {inputError.description && (
-              <p className="error">{inputError.description}</p>
-            )}
-          </div>
-
-          <div className="form-input">
-            <button onClick={() => apiCall("post", getBooks, book)}>
-              Save New
-            </button>
-            <button
-              onClick={() =>
-                apiCall("put", `${getBooks}/${bookSelected}`, book)
-              }
-              disabled={bookSelected ? false : true}
-            >
-              Save
-            </button>
-            <button
-              onClick={() => apiCall("delete", `${getBooks}/${bookSelected}`)}
-              disabled={bookSelected ? false : true}
-            >
-              Delete
-            </button>
-          </div>
-        </div>
+        <Form
+          inputError={inputError}
+          book={book}
+          bookSelected={bookSelected}
+          handleChange={handleChange}
+          handlePost={handlePost}
+          handleUpdate={handleUpdate}
+          handleDelete={handleDelete}
+        />
       </div>
     </div>
   );

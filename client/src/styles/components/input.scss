@@ -1,0 +1,20 @@
+.form-input {
+  input {
+    @extend %formInput;
+    padding: 10px 8px;
+  }
+
+  .form-label {
+    color: $grey;
+    font-size: 14px;
+  }
+
+  &:not(:first-child) {
+    margin: 20px 0;
+  }
+
+  .error {
+    color: #dc7633;
+    font-size: 14px;
+  }
+}

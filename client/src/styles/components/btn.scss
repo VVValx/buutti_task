@@ -1,0 +1,18 @@
+.btn-group {
+  button {
+    padding: 5px 8px;
+    cursor: pointer;
+    border: 1px solid $lighter-grey;
+    color: $grey;
+    border-radius: 5px;
+
+    &:not(:first-child) {
+      margin-left: 5px;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}

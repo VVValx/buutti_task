@@ -1,0 +1,12 @@
+.form-container {
+  @include width(0);
+  @include boxShadow;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+@media (max-width: 700px) {
+  .form-container {
+    margin-bottom: 40px;
+  }
+}
